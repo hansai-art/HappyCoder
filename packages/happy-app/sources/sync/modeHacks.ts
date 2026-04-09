@@ -5,7 +5,8 @@ export type HackableMode = {
 };
 
 function isRepeatedModeLabel(label: string, modeKey: string): boolean {
-    return new RegExp(`^${modeKey}(?:\\s*[,/]\\s*${modeKey})?$`).test(label);
+    const parts = label.split(/[,/]/).map((part) => part.trim()).filter(Boolean);
+    return parts.length > 0 && parts.length <= 2 && parts.every((part) => part === modeKey);
 }
 
 export function hackMode<T extends HackableMode>(mode: T): T {
