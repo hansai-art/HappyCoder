@@ -113,24 +113,22 @@ if (!found) {
             if (l.languageCode === 'zh') {
                 let chineseVariant: string | null = null;
                 const languageTag = (l.languageTag ?? '').toLowerCase();
+                const languageTagParts = languageTag.split('-').filter(Boolean);
+                const hasTraditionalTag = languageTagParts.includes('hant') ||
+                    languageTagParts.some((part) => part === 'tw' || part === 'hk' || part === 'mo');
+                const hasSimplifiedTag = languageTagParts.includes('hans') ||
+                    languageTagParts.some((part) => part === 'cn' || part === 'sg');
 
                 if (l.languageScriptCode === 'Hans') {
                     chineseVariant = 'zh-Hans';
                 } else if (l.languageScriptCode === 'Hant') {
                     chineseVariant = 'zh-Hant';
-                } else if (
-                    languageTag.includes('hant') ||
-                    languageTag.endsWith('-tw') ||
-                    languageTag.endsWith('-hk') ||
-                    languageTag.endsWith('-mo')
-                ) {
+                } else if (hasTraditionalTag) {
                     chineseVariant = 'zh-Hant';
-                } else if (
-                    languageTag.includes('hans') ||
-                    languageTag.endsWith('-cn') ||
-                    languageTag.endsWith('-sg')
-                ) {
+                } else if (hasSimplifiedTag) {
                     chineseVariant = 'zh-Hans';
+                } else if (!languageTag) {
+                    console.warn('[i18n] Missing language tag for Chinese locale, falling back to default Chinese handling');
                 }
 
                 console.log(`[i18n] Chinese locale: ${l.languageTag}/${l.languageScriptCode} -> ${chineseVariant}`);
