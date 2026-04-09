@@ -112,15 +112,28 @@ if (!found) {
             // Expo added special handling for Chinese variants using script code https://github.com/expo/expo/pull/34984
             if (l.languageCode === 'zh') {
                 let chineseVariant: string | null = null;
+                // Normalize the BCP 47 tag to lowercase and match only simple script/region subtags that
+                // Expo typically returns for Chinese locales, such as zh-Hant-TW or zh-CN.
+                const languageTag = (l.languageTag ?? '').toLowerCase();
+                const languageTagParts = languageTag.split('-').filter(Boolean);
+                const hasTraditionalTag = languageTagParts.includes('hant') ||
+                    languageTagParts.some((part) => part === 'tw' || part === 'hk' || part === 'mo');
+                const hasSimplifiedTag = languageTagParts.includes('hans') ||
+                    languageTagParts.some((part) => part === 'cn' || part === 'sg');
 
-                // We only have translations for simplified Chinese right now, but looking for help with traditional Chinese.
                 if (l.languageScriptCode === 'Hans') {
                     chineseVariant = 'zh-Hans';
                 } else if (l.languageScriptCode === 'Hant') {
                     chineseVariant = 'zh-Hant';
+                } else if (hasTraditionalTag) {
+                    chineseVariant = 'zh-Hant';
+                } else if (hasSimplifiedTag) {
+                    chineseVariant = 'zh-Hans';
+                } else if (!languageTag) {
+                    console.warn('[i18n] Missing language tag for Chinese locale, falling back to zh-Hans');
                 }
 
-                console.log(`[i18n] Chinese script code: ${l.languageScriptCode} -> ${chineseVariant}`);
+                console.log(`[i18n] Chinese locale: ${l.languageTag}/${l.languageScriptCode} -> ${chineseVariant}`);
 
                 if (chineseVariant && chineseVariant in translations) {
                     currentLanguage = chineseVariant as SupportedLanguage;

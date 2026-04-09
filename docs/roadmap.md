@@ -1,92 +1,92 @@
-# Happy Roadmap
+# Happy 路線圖
 
-## Next Up
+## 近期計畫
 
-- Start using as the daily development driver
-- Contributing guidelines — priority: bugs > ui touchups > new features > refactors > core refactors (sync engine, rpc, server changes). Get notified about all issue activity on github — just start using inbox?
-- Start tweeting about changes with images / videos
+- 開始作為日常開發工具使用
+- 貢獻指南——優先順序：錯誤修復 > UI 微調 > 新功能 > 重構 > 核心重構（同步引擎、RPC、伺服器變更）。在 GitHub 上關注所有 Issue 動態——直接開始使用收件匣？
+- 開始發布含圖片／影片的變更推文
 
-## Table Stakes (catch conductor)
+## 基礎功能（追趕領跑者）
 
-- Small UX touchups - too many to list
-- Bundled distribution (needed to make my own daily driver)
-- Forking a session - for example a session with triaging -> fork into multiple where we fix the specific groups of issues
+- 大量小型 UX 微調——多到難以一一列舉
+- 打包發布（讓自己能作為日常使用工具）
+- 分叉 Session——例如含有問題分類的 Session -> 分叉成多個以修復特定問題群組
 
-- File preview / editing in session
-- Better diff viewer
+- Session 中的檔案預覽／編輯
+- 更好的差異比較工具
 
-[hard]
-- Attachments in composer / in agent output [hard, encrypted attachments, extra storage - needs design]
-- Terminal embedded in app
+【困難】
+- 在 Composer 或 Agent 輸出中新增附件【困難，加密附件、額外儲存空間——需要設計】
+- 應用程式中嵌入終端機
 
-## Underlying Assistant Upkeep
+## 底層助理維護
 
-- Bug fixes, especially with session lifecycle management
-- Crons / scheduled agents
-- Migrate to most up to date vendor sdks
-- Better flags support
+- 錯誤修復，尤其是 Session 生命週期管理
+- 定時任務／排程 Agent
+- 遷移至最新的廠商 SDK
+- 更好的旗標支援
 
-[nice to have]
-- Memory viewing / editing
-- Slash commands
-- Codex review, other commands
-- Tighter MCP / tool ecosystem hooks
-- Keep up as vendors ship new features
+【附加功能】
+- 記憶內容的檢視／編輯
+- 斜線指令
+- Codex 審查及其他指令
+- 更緊密的 MCP／工具生態系統整合
+- 持續跟進廠商推出的新功能
 
-- Cleaner protocol + unit tests
+- 更清晰的協定 + 單元測試
 
-## Viral / Cool
+## 病毒式傳播／酷炫功能
 
-- Multi-agent dispatch
-  - Fan-out N agents across machines
-  - Agents dispatching agents (you just watch)
-  - Orchestration UI (progress, results, cost)
-- Software factories / maintenance factory
-  - Repeatable agent pipelines
-  - Own repo as first customer — self-maintaining
-- Voice
-  - Dispatch agents by talking
-  - Voice as the control layer
+- 多 Agent 調度
+  - 跨機器同時分散 N 個 Agent
+  - Agent 調度 Agent（您只需觀看）
+  - 協作 UI（進度、結果、成本）
+- 軟體工廠／維護工廠
+  - 可重複執行的 Agent 流程
+  - 以自有 Repo 作為第一個客戶——自我維護
+- 語音
+  - 透過語音調度 Agent
+  - 語音作為控制層
 
-## Talk to Users & Community
+## 與使用者及社群交流
 
-- Reach out to 5 users directly
-- Read app store / google play reviews
-- In-app surveys / feedback chat
-- Contribution guidelines + PR template
-- Post about latest version
-- Engage with open PRs / community contributions
+- 直接聯繫 5 位使用者
+- 閱讀 App Store／Google Play 評論
+- 應用程式內問卷調查／意見回饋聊天
+- 貢獻指南 + PR 範本
+- 發布最新版本的相關文章
+- 與開放中的 PR 及社群貢獻互動
 
-## Growth
+## 成長
 
-- Semi-autonomous posting
-  - Nudge-tweet after each ship
-  - Watch git activity → draft posts
-- Semi-automated engagement
-  - Find relevant people / conversations
-  - Draft replies, human approves
-- Twitter / HN / socials presence
+- 半自主發文
+  - 每次發布後發推文提示
+  - 監控 git 活動 → 起草貼文
+- 半自動互動
+  - 尋找相關人士／對話
+  - 起草回覆，由人工審核
+- Twitter／HN／社群媒體存在感
 
-## Session / Project Management
+## Session／專案管理
 
-- Reorder / prioritize sessions in sidebar
+- 在側邊欄中重新排序／優先排列 Session
 
-## Customization
+## 客製化
 
-- UI self-customization ("change X" → happy obliges)
-- Custom widgets per session / project
-- Widgets on mobile (iOS/Android) + desktop
+- UI 自我客製化（「修改 X」→ Happy 照辦）
+- 每個 Session／專案的自訂小工具
+- 行動版（iOS／Android）+ 桌面版小工具
 
-## Better Machine Management
+## 更好的機器管理
 
-- Auth transferring between devices
+- 裝置間的身份驗證轉移
 
-## Integrations (external services)
+## 整合（外部服務）
 
-- remote machine ecosystem
-  - exe.dev — tutorials, outreach
-  - sprites — same
+- 遠端機器生態系統
+  - exe.dev——教學、外展
+  - sprites——同上
 - Linear
-- GitHub — PR reviews
+- GitHub——PR 審查
 
 
