@@ -112,15 +112,28 @@ if (!found) {
             // Expo added special handling for Chinese variants using script code https://github.com/expo/expo/pull/34984
             if (l.languageCode === 'zh') {
                 let chineseVariant: string | null = null;
+                const languageTag = (l.languageTag ?? '').toLowerCase();
 
-                // We only have translations for simplified Chinese right now, but looking for help with traditional Chinese.
                 if (l.languageScriptCode === 'Hans') {
                     chineseVariant = 'zh-Hans';
                 } else if (l.languageScriptCode === 'Hant') {
                     chineseVariant = 'zh-Hant';
+                } else if (
+                    languageTag.includes('hant') ||
+                    languageTag.endsWith('-tw') ||
+                    languageTag.endsWith('-hk') ||
+                    languageTag.endsWith('-mo')
+                ) {
+                    chineseVariant = 'zh-Hant';
+                } else if (
+                    languageTag.includes('hans') ||
+                    languageTag.endsWith('-cn') ||
+                    languageTag.endsWith('-sg')
+                ) {
+                    chineseVariant = 'zh-Hans';
                 }
 
-                console.log(`[i18n] Chinese script code: ${l.languageScriptCode} -> ${chineseVariant}`);
+                console.log(`[i18n] Chinese locale: ${l.languageTag}/${l.languageScriptCode} -> ${chineseVariant}`);
 
                 if (chineseVariant && chineseVariant in translations) {
                     currentLanguage = chineseVariant as SupportedLanguage;

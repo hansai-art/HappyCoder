@@ -67,10 +67,10 @@ export const SUPPORTED_LANGUAGES: Record<SupportedLanguage, LanguageInfo> = {
         nativeName: '中文(简体)',
         englishName: 'Chinese (Simplified)'
     },
-'zh-Hant': {
+    'zh-Hant': {
         code: 'zh-Hant',
-        nativeName: '中文(繁體)',
-        englishName: 'Chinese (Traditional)'
+        nativeName: '繁體中文（臺灣）',
+        englishName: 'Chinese (Traditional, Taiwan)'
     },
     ja: {
         code: 'ja',

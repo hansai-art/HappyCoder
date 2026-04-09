@@ -16,6 +16,7 @@ import { es } from '../text/translations/es';
 import { pt } from '../text/translations/pt';
 import { ca } from '../text/translations/ca';
 import { zhHans } from '../text/translations/zh-Hans';
+import { zhHant } from '../text/translations/zh-Hant';
 
 const translations = {
     en,
@@ -25,6 +26,7 @@ const translations = {
     pt,
     ca,
     'zh-Hans': zhHans,
+    'zh-Hant': zhHant,
 };
 
 const languageNames: Record<string, string> = {
@@ -35,6 +37,7 @@ const languageNames: Record<string, string> = {
     pt: 'Portuguese',
     ca: 'Catalan',
     'zh-Hans': 'Chinese (Simplified)',
+    'zh-Hant': 'Chinese (Traditional, Taiwan)',
 };
 
 // Function to recursively extract all keys from an object
