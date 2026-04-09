@@ -1,8 +1,8 @@
-# Voice Architecture
+# 語音架構
 
-How the ElevenLabs voice assistant integrates with the Happy app, routes messages to sessions, and manages context delivery.
+說明 ElevenLabs 語音助理如何與 Happy 應用程式整合、如何將訊息路由至工作階段，以及如何管理上下文傳遞。
 
-## Components
+## 元件
 
 ```text
 SessionView.tsx            UI — mic button, triggers voice start/stop
@@ -17,14 +17,14 @@ storage.ts                 Global state (realtimeStatus, realtimeMode)
 types.ts                   Shared type definitions
 ```
 
-## Session Routing
+## 工作階段路由
 
-A single module-level variable `currentSessionId` in `RealtimeSession.ts` controls which session the voice agent's tool calls route to. It is the single source of truth for both:
+`RealtimeSession.ts` 中的模組層級變數 `currentSessionId` 控制語音代理的工具呼叫要路由到哪個工作階段，它是以下兩者的唯一真實來源：
 
-- **Routing**: `messageClaudeCode` and `processPermissionRequest` in `realtimeClientTools.ts` read it via `getCurrentRealtimeSessionId()`.
-- **Focus dedup**: `voiceHooks.onSessionFocus()` compares against it to avoid re-injecting context for the already-focused session.
+- **路由**：`realtimeClientTools.ts` 中的 `messageClaudeCode` 與 `processPermissionRequest` 透過 `getCurrentRealtimeSessionId()` 讀取此值。
+- **焦點去重**：`voiceHooks.onSessionFocus()` 與其比較，避免對已聚焦的工作階段重複注入上下文。
 
-When the user navigates to a different session while voice is active, `onSessionFocus` updates `currentSessionId` so subsequent voice commands route to the newly viewed session.
+當使用者在語音啟用期間切換至不同工作階段時，`onSessionFocus` 會更新 `currentSessionId`，使後續語音命令路由至新查看的工作階段。
 
 ```text
 User taps mic on Session A
@@ -44,12 +44,12 @@ Voice agent calls messageClaudeCode
   └──> getCurrentRealtimeSessionId() → "B"
 ```
 
-## Voice Start
+## 語音啟動
 
-When the voice session starts, `onVoiceStarted(sessionId)` builds an initial prompt containing:
+當語音工作階段啟動時，`onVoiceStarted(sessionId)` 會建立包含以下內容的初始提示：
 
-1. **Session directory** — one-liner per active session (id + summary), so the agent knows all available targets.
-2. **Current session context** — full dump via `injectSessionContext(sessionId)`: session metadata, path, summary, and message history.
+1. **工作階段目錄** — 每個活躍工作階段的單行摘要（ID + 摘要），讓代理知道所有可用目標。
+2. **當前工作階段上下文** — 透過 `injectSessionContext(sessionId)` 完整傾印：工作階段元資料、路徑、摘要及訊息歷史。
 
 ```text
 onVoiceStarted("A")
@@ -61,25 +61,25 @@ onVoiceStarted("A")
          → "# Session ID: abc\n# Project path: ...\n## History\n..."
 ```
 
-## Context Delivery
+## 上下文傳遞
 
-App events are delivered to the voice agent through two channels with different semantics:
+應用程式事件透過兩個語義不同的管道傳遞至語音代理：
 
-### sendContext() — silent background injection
+### sendContext() — 靜默背景注入
 
-Calls `voice.sendContextualUpdate()`. The agent receives the information but does **not** respond. Always sent immediately, never queued.
+呼叫 `voice.sendContextualUpdate()`。代理接收資訊但**不會**回應。始終立即傳送，從不排入佇列。
 
-Used for: new messages, session focus changes, session online/offline, full session dumps.
+用途：新訊息、工作階段焦點變更、工作階段上線／離線、完整工作階段傾印。
 
-### sendPrompt() — triggers agent response
+### sendPrompt() — 觸發代理回應
 
-Calls `voice.sendTextMessage()`. Acts as a user turn — the agent will respond. **Queued while anyone is speaking**, flushed as a single batch when mode transitions to `idle`.
+呼叫 `voice.sendTextMessage()`。作為使用者回合運作——代理將會回應。**在任何人說話期間排入佇列**，當模式轉換為 `idle` 時作為單一批次一起清空。
 
-Used for: permission requests, ready events (agent finished working).
+用途：權限請求、就緒事件（代理完成工作）。
 
-### Batching
+### 批次處理
 
-When the user or agent is speaking, prompts queue up in `pendingPrompts[]`. A zustand subscription on `realtimeMode` triggers `flushPendingPrompts()` when mode returns to `idle`, joining all queued prompts into a single `sendTextMessage` call.
+當使用者或代理正在說話時，提示會排入 `pendingPrompts[]` 佇列。`realtimeMode` 上的 zustand 訂閱在模式回到 `idle` 時觸發 `flushPendingPrompts()`，將所有排入佇列的提示合併為單一 `sendTextMessage` 呼叫。
 
 ```text
 realtimeMode = 'agent-speaking'
@@ -96,30 +96,30 @@ flushPendingPrompts()
   └──> voice.sendTextMessage(joined prompts)
 ```
 
-### Session Context Injection
+### 工作階段上下文注入
 
-`injectSessionContext(sessionId)` is the shared code path for injecting full session context. It is used by both `onVoiceStarted` (to build the initial prompt string) and `onSessionFocus` (to send a contextual update). It tracks which sessions have already been shown via `shownSessions` to avoid redundant dumps.
+`injectSessionContext(sessionId)` 是注入完整工作階段上下文的共享程式碼路徑。它被 `onVoiceStarted`（用於建立初始提示字串）與 `onSessionFocus`（用於傳送上下文更新）兩者使用。它透過 `shownSessions` 追蹤哪些工作階段已顯示過，以避免重複傾印。
 
-## Realtime Mode
+## 即時模式
 
-`realtimeMode` in storage tracks who is currently speaking:
+`storage` 中的 `realtimeMode` 追蹤當前說話者：
 
-| Mode | Meaning | Source |
-|------|---------|--------|
-| `idle` | Nobody is talking | Default / after speech ends |
-| `agent-speaking` | ElevenLabs agent is producing audio | `onModeChange({ mode: 'speaking' })` |
-| `user-speaking` | User mic VAD is above threshold | `onVadScore({ vadScore })` |
+| 模式 | 含義 | 來源 |
+|------|------|------|
+| `idle` | 無人說話 | 預設值／說話結束後 |
+| `agent-speaking` | ElevenLabs 代理正在產生音訊 | `onModeChange({ mode: 'speaking' })` |
+| `user-speaking` | 使用者麥克風 VAD 超過閾值 | `onVadScore({ vadScore })` |
 
-Priority: `agent-speaking` > `user-speaking` > `idle`. If both fire simultaneously, agent wins (user speech during agent output is likely crosstalk).
+優先順序：`agent-speaking` > `user-speaking` > `idle`。若兩者同時觸發，代理優先（代理輸出期間的使用者語音可能是串音）。
 
-### VAD Detection
+### VAD 偵測
 
-ElevenLabs provides `onVadScore({ vadScore: number })` — a continuous 0-1 signal for user microphone activity. We derive a binary state with debounce:
+ElevenLabs 提供 `onVadScore({ vadScore: number })`——使用者麥克風活動的 0-1 連續訊號。我們透過去抖動衍生二元狀態：
 
-- `vadScore > VAD_THRESHOLD` (0.5) → `user-speaking`, reset silence timer
-- `vadScore <= VAD_THRESHOLD` → start silence timer (`VAD_SILENCE_MS` = 300ms), transition to `idle` on timeout
+- `vadScore > VAD_THRESHOLD`（0.5）→ `user-speaking`，重設靜默計時器
+- `vadScore <= VAD_THRESHOLD` → 啟動靜默計時器（`VAD_SILENCE_MS` = 300ms），逾時後轉換為 `idle`
 
-Agent mode changes (`onModeChange`) take priority over VAD. When `onModeChange` reports `'speaking'`, we set `agent-speaking` regardless of VAD. When it reports `'listening'`, we defer to VAD state.
+代理模式變更（`onModeChange`）優先於 VAD。當 `onModeChange` 回報 `'speaking'` 時，無論 VAD 狀態如何，均設為 `agent-speaking`。當回報 `'listening'` 時，則遵從 VAD 狀態。
 
 ```text
 ElevenLabs SDK
@@ -136,16 +136,16 @@ ElevenLabs SDK
                vadScore ≤ 0.5 → debounce → 'idle'
 ```
 
-## Voice Agent Tools
+## 語音代理工具
 
-The voice agent can invoke these client tools (defined in `realtimeClientTools.ts`):
+語音代理可呼叫以下客戶端工具（定義於 `realtimeClientTools.ts`）：
 
-- **messageClaudeCode** — sends a text message to the currently focused session via `sync.sendMessage(sessionId, message)`.
-- **processPermissionRequest** — allows or denies a pending permission request on the current session.
+- **messageClaudeCode** — 透過 `sync.sendMessage(sessionId, message)` 向當前聚焦的工作階段傳送文字訊息。
+- **processPermissionRequest** — 允許或拒絕當前工作階段的待處理權限請求。
 
-Both read the target session from `getCurrentRealtimeSessionId()`.
+兩者均從 `getCurrentRealtimeSessionId()` 讀取目標工作階段。
 
-## Lifecycle
+## 生命週期
 
 ```text
 App mounts RealtimeVoiceSession component
@@ -166,6 +166,6 @@ User taps mic again (or navigates away)
          └──> voiceHooks.onVoiceStopped() — clears state
 ```
 
-## Related
+## 相關
 
-- `docs/plans/elevenlabs-voice-usage-gating.md` — usage gating and paywall flow for voice sessions.
+- `docs/plans/elevenlabs-voice-usage-gating.md` — 語音工作階段的使用量管控與付費牆流程。

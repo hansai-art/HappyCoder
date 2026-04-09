@@ -1,13 +1,13 @@
-# Product Analytics
+# 產品分析
 
 # [auto]
 
-## Navigation
+## 導覽
 
 - $screen
   - $screen_name
 
-## Lifecycle
+## 生命週期
 
 - Application Installed
 - Application Updated
@@ -20,13 +20,13 @@
 
 # [explicit]
 
-## Auth
+## 驗證
 
 - account_created
 - account_restored
-  - note: this is restore-flow start, not restore success
+  - 備注：此為還原流程的開始，而非還原成功
 
-## Core
+## 核心
 
 - connect_attempt
 - message_sent
@@ -42,7 +42,7 @@
   - last_active_at
   - last_updated_at
 
-## Voice
+## 語音
 
 - voice_permission_response
   - allowed
@@ -58,9 +58,9 @@
   - elevenlabs_conversation_id
   - duration_seconds
 
-## Paywall
+## 付費牆
 
-all include flow property which customizes the upsell screen shown by revenue cat.
+所有事件均包含 flow 屬性，用於自訂由 Revenue Cat 顯示的追加銷售畫面。
 
 - paywall_button_clicked
 - paywall_presented
@@ -70,7 +70,7 @@ all include flow property which customizes the upsell screen shown by revenue ca
 - paywall_error
   - error
 
-## Review
+## 評分
 
 - review_prompt_shown
 - review_prompt_response
@@ -79,7 +79,7 @@ all include flow property which customizes the upsell screen shown by revenue ca
 - review_retry_scheduled
   - days_until_retry
 
-## Updates
+## 更新
 
 - ota_update_available
   - ota_version
@@ -93,17 +93,17 @@ all include flow property which customizes the upsell screen shown by revenue ca
 
 - github_connected
 
-## Friends
+## 好友
 
 - friends_search
 - friends_profile_view
 - friends_connect
 
-# Appendix
+# 附錄
 
-## Shared SDK Properties
+## 共享 SDK 屬性
 
-- every capture(...) send also includes:
+- 每個 capture(...) 呼叫也會包含：
   - $lib
   - $lib_version
   - $session_id
@@ -126,7 +126,7 @@ all include flow property which customizes the upsell screen shown by revenue ca
   - event
   - distinct_id
 
-## Identity And Control Sends
+## 身份識別與控制傳送
 
 - $identify
 - $set
@@ -134,23 +134,23 @@ all include flow property which customizes the upsell screen shown by revenue ca
 - optIn
 - optOut
 
-## Strong Preferences
+## 核心偏好
 
-- Prefer a small number of core events with explicit properties over a growing set of overlapping events.
-- `message_sent` is the canonical outbound send event. Do not add parallel send events for specific surfaces like voice. Add or use `source` instead.
-- If a new analytics question can be answered by extending an existing event, prefer adding a property over inventing a new event.
-- `session_switched` should carry stable identity, not just recency. Keep `session_id` and `session_created_at` on it.
-- OTA context is first-class and should travel with the events that matter. Keep `ota_version` and `ota_runtime_version` on `message_sent`, `ota_update_available`, and `ota_update_applied`.
-- Prefer direct, explicit property objects at capture sites. Do not hide event shape behind generic helper layers that silently add, remove, or filter fields.
-- If we ever care about session-switch entry source, add an explicit `source` property. Do not try to reconstruct it later from navigation context.
+- 優先使用少量帶有明確屬性的核心事件，而非不斷增長的重疊事件集合。
+- `message_sent` 是標準的外發傳送事件。不要為語音等特定介面新增平行傳送事件，請改用或新增 `source`。
+- 若新的分析問題可透過擴展現有事件來回答，優先新增屬性而非創建新事件。
+- `session_switched` 應攜帶穩定的身份識別，而非僅有近期性。在其上保留 `session_id` 與 `session_created_at`。
+- OTA 上下文為一等公民，應與重要事件一起傳遞。在 `message_sent`、`ota_update_available` 及 `ota_update_applied` 上保留 `ota_version` 與 `ota_runtime_version`。
+- 在擷取位置優先使用直接、明確的屬性物件。不要將事件形狀隱藏於會靜默新增、移除或篩選欄位的通用輔助層後面。
+- 若日後需要工作階段切換的進入來源，請新增明確的 `source` 屬性。不要嘗試從導覽上下文中事後重建。
 
-## Notes
+## 注意事項
 
-- session_switched now includes stable identity (`session_id`, `session_created_at`) plus recency. Entry source is still merged until we add an explicit source property.
-- elevenlabs_conversation_id is the conversation id returned by the ElevenLabs voice session layer.
-- github_connected is a plain event with no GitHub profile data attached.
+- session_switched 現在包含穩定身份識別（`session_id`、`session_created_at`）以及近期性。進入來源仍合併保留，直到我們新增明確的 source 屬性。
+- elevenlabs_conversation_id 是由 ElevenLabs 語音工作階段層回傳的對話 ID。
+- github_connected 是一個不附帶任何 GitHub 個人資料資料的純事件。
 
-## Relevant Sources
+## 相關來源
 
 - packages/happy-app/sources/track/index.ts
 - packages/happy-app/sources/hooks/useNavigateToSession.ts

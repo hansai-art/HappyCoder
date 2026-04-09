@@ -1,36 +1,33 @@
-# Dev Environments
+# 開發環境
 
-This document covers the local environment manager in [`environments/environments.ts`](../environments/environments.ts).
+本文件說明 [`environments/environments.ts`](../environments/environments.ts) 中的本地環境管理工具。
 
-## What `yarn env:*` Does
+## `yarn env:*` 的功能
 
-- `yarn env:new`: create a new isolated environment under `environments/data/envs/<name>`.
-- `yarn env:use <name>`: switch the current environment.
-- `yarn env:server`: run the server inside the current environment.
-- `yarn env:web`: run the web app inside the current environment.
-- `yarn env:cli`: run the CLI inside the current environment.
+- `yarn env:new`：在 `environments/data/envs/<name>` 下建立一個新的隔離環境。
+- `yarn env:use <name>`：切換目前使用的環境。
+- `yarn env:server`：在目前環境中執行伺服器。
+- `yarn env:web`：在目前環境中執行 Web 應用程式。
+- `yarn env:cli`：在目前環境中執行 CLI。
 
-Each environment injects its own:
+每個環境都會注入自己的：
 
 - `HAPPY_HOME_DIR`
 - `HAPPY_SERVER_URL`
 - `HAPPY_WEBAPP_URL`
 - `HAPPY_PROJECT_DIR`
-- Expo/server port settings
-- dev auth values when seeded
+- Expo／伺服器埠號設定
+- 已預設種子時的開發驗證值
 
-Each fresh environment also gets a copied lightweight fixture project from
-`environments/lab-rat-todo-project/` at `environments/data/envs/<name>/project`.
+每個全新環境也會從 `environments/lab-rat-todo-project/` 複製一份輕量的固定測試專案，放置於 `environments/data/envs/<name>/project`。
 
-Current limitation: the lab-rat project is copied as plain files only. It does
-not include git history yet, so provider tests that depend on realistic repo
-history still need a later fixture upgrade.
+目前限制：lab-rat 專案僅以純文字形式複製，尚未包含 git 歷史紀錄，因此依賴真實 repo 歷史的 provider 測試仍需等待後續的固定測試升級。
 
-## `yarn env:cli` Is A Passthrough
+## `yarn env:cli` 是一個直通指令
 
-`yarn env:cli` forwards extra arguments directly to `happy`.
+`yarn env:cli` 會將額外的引數直接轉發給 `happy`。
 
-Examples:
+範例：
 
 ```bash
 yarn env:cli --help
@@ -40,38 +37,38 @@ yarn env:cli daemon stop
 yarn env:cli daemon start
 ```
 
-This is equivalent to sourcing the environment and running the CLI manually:
+這等同於載入環境並手動執行 CLI：
 
 ```bash
 source environments/data/envs/<name>/env.sh
 happy daemon status
 ```
 
-## Why `env:cli` Exists
+## `env:cli` 存在的原因
 
-It is a convenience wrapper for the current environment. It does not create or pick an environment on its own. It just:
+它是目前環境的便利封裝。它本身不會建立或選取環境，只會：
 
-1. Reads `environments/data/current.json`
-2. Builds env vars for that environment
-3. Launches the CLI with those vars applied
+1. 讀取 `environments/data/current.json`
+2. 為該環境建立環境變數
+3. 套用這些變數後啟動 CLI
 
-If you want a lower-level, shell-native workflow, use the generated env file directly:
+若您偏好更底層、Shell 原生的工作流程，請直接使用產生的環境檔案：
 
 ```bash
 source environments/data/envs/<name>/env.sh
 happy
 ```
 
-## Restarting The Current Environment Daemon
+## 重新啟動目前環境的 Daemon
 
-Either of these now works:
+以下兩種方式均可使用：
 
 ```bash
 yarn env:cli daemon stop
 yarn env:cli daemon start
 ```
 
-Or:
+或：
 
 ```bash
 source environments/data/envs/<name>/env.sh

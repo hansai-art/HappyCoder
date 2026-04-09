@@ -1,69 +1,69 @@
-# User Identity Across Systems
+# 跨系統的使用者身份識別
 
-How a single Happy user is identified across every external service.
+說明單一 Happy 使用者如何在每個外部服務中被識別。
 
-## Primary ID: Happy Account CUID
+## 主要 ID：Happy 帳號 CUID
 
-- **Type:** CUID (collision-resistant unique ID, string)
-- **Created:** On first auth via public-key signature verification (`Account.upsert` by `publicKey`)
-- **Stored:** `Account.id` in Prisma, JWT payload (`{ user: CUID }`)
-- **In code:** `request.userId` on server, `sync.serverID` on mobile
-- **Visible in app:** Settings > Developer > Purchases page shows `sync.serverID`
+- **類型：** CUID（碰撞抵抗唯一 ID，字串）
+- **建立時機：** 首次透過公開金鑰簽名驗證進行身份驗證時（`Account.upsert` 依 `publicKey`）
+- **儲存位置：** Prisma 中的 `Account.id`，JWT payload（`{ user: CUID }`）
+- **程式碼中：** 伺服器端的 `request.userId`，行動端的 `sync.serverID`
+- **應用程式中可見：** 設定 > 開發者 > 購買頁面顯示 `sync.serverID`
 
-## Identity Map
+## 身份對應關係
 
 ```
-Happy Account CUID (e.g. cm4x7k2...)
+Happy 帳號 CUID（例如 cm4x7k2...）
 │
 ├─► ElevenLabs ── u_{base64url(HMAC-SHA256(CUID, MASTER_SECRET))}
-│                 Derived on every request, never stored.
+│                 每次請求時動態衍生，從不儲存。
 │                 voiceRoutes.ts:deriveElevenUserId()
 │
-├─► RevenueCat ── Same CUID, passed directly as appUserID
-│                 Set once on mobile: RevenueCat.configure({ appUserID: serverID })
-│                 Server queries RevenueCat API with the same CUID
+├─► RevenueCat ── 直接使用相同 CUID，作為 appUserID 傳入
+│                 在行動端設定一次：RevenueCat.configure({ appUserID: serverID })
+│                 伺服器以相同 CUID 查詢 RevenueCat API
 │
-├─► GitHub ────── External GitHub integer ID → stored in Account.githubUserId
-│                 Linked via OAuth in githubConnect.ts
-│                 Also stores encrypted access token in GithubUser.token
+├─► GitHub ────── 外部 GitHub 整數 ID → 儲存於 Account.githubUserId
+│                 透過 githubConnect.ts 中的 OAuth 完成連結
+│                 同時將加密的 access token 儲存於 GithubUser.token
 │
-└─► AI Vendors ── ServiceAccountToken { accountId: CUID, vendor, token }
-   (OpenAI,       User's own API keys, encrypted at rest.
+└─► AI 廠商 ───── ServiceAccountToken { accountId: CUID, vendor, token }
+   (OpenAI,       使用者自有 API 金鑰，靜態加密。
     Anthropic,    connectRoutes.ts: POST /v1/connect/:vendor/register
     Gemini)
 ```
 
-## Auth Flow
+## 身份驗證流程
 
 ```
-Client keypair (libsodium/NaCl)
+客戶端金鑰對（libsodium/NaCl）
   │
-  ├─ sign challenge with private key
+  ├─ 以私鑰對 challenge 簽名
   │
   ▼
 POST /v1/auth { publicKey, challenge, signature }
   │
-  ├─ server verifies signature (tweetnacl)
+  ├─ 伺服器驗證簽名（tweetnacl）
   ├─ Account.upsert({ where: { publicKey } })  →  CUID
-  ├─ auth.createToken(CUID)  →  JWT (signed with HANDY_MASTER_SECRET)
+  ├─ auth.createToken(CUID)  →  JWT（以 HANDY_MASTER_SECRET 簽署）
   │
   ▼
-Client stores JWT, sends as Authorization header on all requests
-Server extracts CUID from JWT via app.authenticate decorator
+客戶端儲存 JWT，在所有請求中以 Authorization header 發送
+伺服器透過 app.authenticate 裝飾器從 JWT 中提取 CUID
 ```
 
-## Key Design Decisions
+## 關鍵設計決策
 
-| System | ID Type | Why |
+| 系統 | ID 類型 | 原因 |
 |--------|---------|-----|
-| ElevenLabs | HMAC-derived | Privacy — raw Happy ID never sent to ElevenLabs |
-| RevenueCat | Pass-through | Direct correlation needed for subscription API calls |
-| GitHub | Stored foreign key | Enables profile linking and account recovery via OAuth |
-| AI vendors | Stored encrypted | User-owned keys, need to be retrievable |
+| ElevenLabs | HMAC 衍生 | 隱私保護——原始 Happy ID 永遠不會發送至 ElevenLabs |
+| RevenueCat | 直接傳遞 | 訂閱 API 呼叫需要直接關聯 |
+| GitHub | 儲存外部鍵 | 支援個人資料連結及透過 OAuth 的帳號復原 |
+| AI 廠商 | 儲存加密 | 使用者自有金鑰，需要能夠取回 |
 
-## Local Scripting
+## 本地腳本
 
-To derive an ElevenLabs user ID from a Happy CUID locally:
+若要從 Happy CUID 本地衍生 ElevenLabs 使用者 ID：
 
 ```python
 import hmac, hashlib, base64
