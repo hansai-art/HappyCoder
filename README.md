@@ -555,7 +555,7 @@ Happy 故意選擇另一條路：
 這一頁內容很短，主要是教你怎麼測試推播是否正常：
 
 ```bash
-happy notify -p "推播內容" -t "通知標題"
+happy notify -p "推播內容 / Notification message" -t "通知標題 / Notification title"
 ```
 
 用途：
