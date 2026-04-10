@@ -303,7 +303,7 @@ Happy 讓你可以從 **手機、平板、瀏覽器** 遠端控制 AI 寫程式 
    npm install -g happy
    ```
 
-   官方文件原文仍顯示較早期的 `happy-coder` 名稱；本 README 前面的安裝說明也提到它已遷移到 `happy`，所以若你是依照本 repo 目前的安裝方式操作，請以 `happy` 為準。
+> 官方文件原文仍顯示較早期的 `happy-coder` 名稱；本 README 前面的安裝說明也提到它已遷移到 `happy`，所以若你是依照本 repo 目前的安裝方式操作，請以 `happy` 為準。
 
 3. **確認 Node.js 版本足夠新**
    - 建議 Node.js 18+
