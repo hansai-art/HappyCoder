@@ -240,7 +240,7 @@ happy doctor
 - **[Contributing Guide](docs/CONTRIBUTING.md)**：如何參與開發、提交 PR 與設定本機環境
 - **[Edit docs at github.com/slopus/slopus.github.io](https://github.com/slopus/slopus.github.io)**：一起改善文件與教學內容
 
-## 📘 官方文件台灣中文版（`https://happy.engineering/docs/` 整理翻譯）
+## 📘 官方文件台灣中文版（整理翻譯）
 
 上面的 README 已經先把最常見的安裝與使用方式整理成中文；如果你想直接閱讀官方文件網站的內容，下面是依照原始頁面整理的台灣中文版本。每一節都附上原始文件連結，方便你對照。
 
